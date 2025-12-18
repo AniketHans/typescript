@@ -25,3 +25,8 @@
    2. Type `any` means anything can be assigned to the variable. `any` should not be used because we are using ts so we can pre define a variable type and use it accordingly, but `any` does not specify any type for the variable
 4. Union variable:
    1. `let a: number|string = "hello"`, here a can have either number or string value
+
+## Type keyword
+
+1. `type` can be used to provide alias to a primitive type or it can be used to defined compound types
+2. `type myNumber = number`, here type is acting as alias to the number type
