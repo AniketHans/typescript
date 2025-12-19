@@ -31,6 +31,7 @@ const newFunc = (val1, val2) => {
     return String(val1 + val2);
 };
 newFunc(10, 20); // Output: "30"
+const darkMode = "Dark";
 //----------------------------------------------------------
 //--------------------------------------------------- Arrays -------------------------------------------------
 //Declaring and defining arrays of single type:
@@ -111,5 +112,145 @@ const Sum = (...m) => {
     return m.reduce((acc, curr) => acc + curr);
 };
 console.log("Sum:", Sum(1, 2, 3, 4, 5, 6, 7, 8, 9)); // Output: `Sum: 45`
-// ----------------------------------------------------------------------------------------------------
+const getData = (product) => {
+    console.log(product);
+};
+const changeProductData = (product) => {
+    product.name = "Mac";
+    product.price = 867544;
+    //product.id = "Product 101"; // `Error`, This will throw error because we can not change the value of id as it is readonly field
+    console.log(product);
+};
+const product1 = {
+    name: "Iron",
+    stock: 20,
+    price: 1011,
+    photo: "Image",
+    id: "Product 1",
+};
+getData(product1); // Output: { name: 'Iron', stock: 20, price: 1011, photo: 'Image',id: 'Product 1' }
+changeProductData(product1);
+// -----------------------------------------------------------------------------------------------------------------
+// -------------------------------------------- Never type ---------------------------------------------------------
+//This is returned in case of functions that throw error
+const errorHandler = () => {
+    // The errorHandler function's return type is never here
+    throw new Error("Haha, mock error");
+};
+const returnError = () => {
+    return new Error("Returning error");
+};
+// -----------------------------------------------------------------------------------------------------------------
+// -------------------------------------------------- Classes ------------------------------------------------------
+class Player {
+    height; // declaring variable types in classes
+    weight; //readonly, can only be assigned value only once that cannot be altered
+    constructor(height, weight) {
+        this.height = height;
+        this.weight = weight;
+        this.weight = 90; //readonly only prevents assignment after the constructor finishes. Thus this is valid
+    }
+}
+const p1 = new Player(60, 55);
+console.log(p1.height);
+console.log(p1.weight);
+//p1.weight = 100; // error as weight is a readonly field
+//------------------------- Access modifiers in classes--------------------------
+// Typescript offers access modifiers like private, public and protected in classes
+// By default all properties are public in classes. Public properties can be accessed using the class object. These can be inherited as well to the child class
+// Private properties are private to the class and cannot be accessed outside of it using class object. They cannot be inherited also
+// Protected properties are private to the class and cannot be accessed outside of it using class object. These can be inherited to child class
+class Product {
+    name;
+    price;
+    seller;
+    sellerAddress;
+    id; // a public readonly property
+    constructor(name, price, seller, sellerAddress) {
+        this.name = name;
+        this.price = price;
+        this.seller = seller;
+        this.sellerAddress = sellerAddress;
+        this.id = Math.random();
+    }
+    getSellerAddress = () => {
+        // By default this function is public
+        // These are getters can be used to access private and protected properties of a class
+        return this.sellerAddress;
+    };
+    getSeller = () => {
+        return this.seller;
+    };
+}
+const prod1 = new Product("Macbook", 10000, "unicorn", "Noida");
+console.log(prod1.name);
+// console.log(prod1.seller); // cannot access protected member of the class
+// console.log(prod1.sellerAddress); // cannot access private member of the class
+console.log(prod1.getSellerAddress());
+// console.log(prod1.getSeller()); // cannot access protected and private methods of the class
+// Shortand for writing this.name = name; etc, the below sytax is same as the above
+class Product2 {
+    name;
+    price;
+    seller;
+    sellerAddress;
+    id;
+    constructor(name, price, seller, sellerAddress) {
+        this.name = name;
+        this.price = price;
+        this.seller = seller;
+        this.sellerAddress = sellerAddress;
+        this.id = Math.random();
+    }
+}
+const prod2 = new Product2("Iphone", 90897, "Unicorn", "Chandi chowk");
+console.log(prod2.name);
+class GroceryProduct extends Product {
+    expiryDate; //public by default
+    label;
+    constructor(name, price, seller, sellerAdd, expiry, label) {
+        super(name, price, seller, sellerAdd);
+        this.expiryDate = expiry;
+        this.label = label;
+        //this.id = 89; // id is the readonly property from the parent so its value cannot be changed
+    }
+    getLabelAndSeller = () => {
+        // this.seller() is the protected function inherited from the parent so the child class can use it
+        return `The seller for product is ${this.getSeller()} and the label is ${this.label}`;
+    };
+}
+const gProd1 = new GroceryProduct("Chakki Atta", 100, "Chakki waala", "Main road", "10.10.2026", "Organic");
+console.log(gProd1.id);
+console.log(gProd1.name); // inherited public property from parent
+console.log(gProd1.price);
+console.log(gProd1.expiryDate); // its own public property
+console.log(gProd1.getSellerAddress()); // public function inherited from parent so we can call it using child as well
+console.log(gProd1.getLabelAndSeller());
+// ----------------- Getter and setter ---------------------
+// getters and setters can be used to access and modify the private properties of a class
+class Food {
+    fname;
+    ftype;
+    constructor(fname, ftype) {
+        this.fname = fname;
+        this.ftype = ftype;
+    }
+    get getFoodName() {
+        return this.fname;
+    }
+    get getFoodType() {
+        return this.ftype;
+    }
+    set changeFoodName(val) {
+        this.fname = val;
+    }
+    set changeFoodType(val) {
+        this.ftype = val;
+    }
+}
+const f1 = new Food("Dahi bhalle", "chaat");
+console.log(f1.getFoodName);
+f1.changeFoodType = "street chaat";
+console.log(f1.getFoodType);
+// -----------------------------------------------------------------------------------------------------------------
 //# sourceMappingURL=index.js.map
