@@ -378,4 +378,99 @@ console.log(f1.getFoodName);
 f1.changeFoodType = "street chaat";
 console.log(f1.getFoodType);
 
+// --------------------- Classes implementing interfaces --------------------
+interface Vehicle {
+  name: string;
+  price: number;
+  stock: number;
+  offer?: boolean;
+  getPriceAndStock: () => string;
+}
+
+// lets take another interface
+
+interface VehicleCompany {
+  getVehicleCompany: () => string;
+}
+
+// We need to implement interface in classes
+class Car implements Vehicle, VehicleCompany {
+  // The class should contain atleast all the mandatory properties and methods mentioned in the interfaces under public modifier
+  name: string;
+  price: number;
+  stock: number;
+  private company: string;
+  model: string;
+
+  constructor(
+    name: string,
+    price: number,
+    stock: number,
+    company: string,
+    model: string,
+    protected manufacturingDate: string
+  ) {
+    this.name = name;
+    this.price = price;
+    this.stock = stock;
+    this.company = company;
+    this.model = model;
+  }
+
+  getPriceAndStock = (): string => {
+    return `The Price is ${this.price} and the stock left are ${this.stock} units`;
+  };
+
+  getManufacturingDate = (): string => {
+    return this.manufacturingDate;
+  };
+
+  getVehicleCompany = (): string => {
+    return this.company;
+  };
+}
+
+const car1 = new Car("Elevate", 1500000, 100, "Honda", "2025", "10.10.2025");
+console.log(car1.name);
+console.log(car1.getPriceAndStock());
+console.log(car1.getVehicleCompany());
+console.log(car1.getManufacturingDate());
+
 // -----------------------------------------------------------------------------------------------------------------
+
+//----------------------------------------- Type Assertion ---------------------------------------------------------
+// We can forcefully assert any type
+interface A {
+  a: string;
+}
+
+interface B {
+  b: number;
+  c: string;
+}
+
+function returnVal(flag: boolean): A | B {
+  //returnVal can return anything based on the flag
+  if (flag) return { a: "hello" };
+  return { b: 100, c: "world" };
+}
+
+const val1 = returnVal(true);
+// val1.a;    // This will throw error as val1 can be anything amoung A and B. Property 'a' does not exist on type 'A | B'. Property 'a' does not exist on type 'B'
+// Thus we need to assert a type manually after we are sure that only that particular value will be returned
+const val2 = returnVal(true) as A; // we are sure for flag=true, the returnVal() will return oject of type A
+console.log(val2.a);
+
+// Alternate syntax for type assertion
+const val3 = <B>returnVal(false);
+console.log(val3.b, val3.c);
+
+// Suppose a function may return undefined or null and you are sure that it will not return undefined for your implementation then you can use the below sytax
+function retVal(f: boolean): A | undefined {
+  if (f) return { a: "hahahah" };
+}
+const val4 = retVal(true);
+console.log(val4?.a); // here it is checking whether val4 is undefined or not
+const val5 = retVal(true)!; // here we explicitly told that the retVal here will not return undefined
+console.log(val5.a);
+//------------------------------------------------------------------------------------------------------------------
