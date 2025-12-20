@@ -473,4 +473,244 @@ const val4 = retVal(true);
 console.log(val4?.a); // here it is checking whether val4 is undefined or not
 const val5 = retVal(true)!; // here we explicitly told that the retVal here will not return undefined
 console.log(val5.a);
+
+// Index signature
+interface Person {
+  name: string;
+  email: string;
+}
+
+const obj: Person = {
+  name: "John Doe",
+  email: "abc@gmail.com",
+};
+
+const getDataUsingKey = (key: string): string => {
+  return obj[key]; // This is valid in JS but in ts it will throw error because key can be any string but for object of type Person the key should be either name or email
+};
+
+const getDataUsingKeyanfKeyOf = (key: keyof Person): string => {
+  return obj[key]; // Here, we explicitly mentioned that the key in params will a key of Person interface so it will not throw any error
+};
+
+console.log(getDataUsingKey("name"));
+console.log(getDataUsingKeyanfKeyOf("email"));
+
+let key = "email";
+console.log(obj[key as keyof Person]);
+
+// if somehow you dont have access to the keys of interface
+console.log(obj[key as keyof typeof obj]); // This tells that the key will from the typeof obj
+
+// --------------------- Dynamic keys --------------
+interface Person1 {
+  [key: string]: string; // here we defined a dynamic key of type string means object of type Person can have any key of type string
+}
+const obj2: Person1 = {
+  name: "John Doe",
+  email: "abc@gmail.com",
+};
+
+const getDataUsingKey1 = (key: string): string | undefined => {
+  return obj2[key]; // total valid as we dont have any spefic keys in Person2 interface
+};
+
 //------------------------------------------------------------------------------------------------------------------
+
+// -------------------------------------------- Type Utility -------------------------------------------------------
+// Type utilities are provided by TS for ease of access. Some of the type utilities are:
+/**
+ * Partial<Type>
+ * Required<Type>
+ * Readonly<Type>
+ * Record<Keys, Type>
+ * Pick<Type, Keys>
+ * Omit<Type, keys>
+ * Exclude<Type, ExcludedUnion>
+ * Extract<Type, Union>
+ * NonNullable<Type>
+ * Parameters<Type>
+ * ConstructorParameters<Type>
+ * ReturnType<Type>
+ * InstanceType<Type>
+ */
+
+// ----------- Partial<Type> ------------
+// This makes all the properties of a type optional
+type User1 = {
+  name: string;
+  email: string;
+};
+
+type User2 = Partial<User1>; // This is similar to `type User2 = {name?:string; email?:string}`
+
+// ----------------------- Required<Type> -----------------------
+// This makes all the properties of a type mandatory
+type User3 = {
+  email?: string;
+  name: string;
+};
+
+type User4 = Required<User3>; // This is similar to `type User4 = {name:string; email:string}`
+const u: Required<User3> = {
+  name: "name",
+  email: "email",
+};
+
+// ----------------- Readonly<type> ----------------------------
+// This makes all the properties of a type readonly
+type User5 = Readonly<User1>;
+const u2: Readonly<User1> = {
+  name: "abc",
+  email: "abc@abc.com",
+};
+u2.name = "kaka"; // Error as the name and email fields are readonly and cannot be modifies after definition
+
+// ---------------- Record<Keys, Type> ----------------------------
+// It takes some keys and a type and returns a type with all the mentioned keys and assign the type mentioned to them
+
+type User6 = Record<"name" | "age" | "email", string>;
+/**
+ * The above statement is same as 
+ * type User6 = {
+        email: string;
+        name: string;
+        age: string;
+    }
+ */
+interface UserAgeInfo {
+  age: number;
+  dob?: string;
+}
+
+type Users = "Admin" | "Normal" | "Banned";
+const users: Record<Users, UserAgeInfo> = {
+  Admin: {
+    age: 20,
+  },
+  Normal: {
+    age: 19,
+    dob: "10.10.2010",
+  },
+  Banned: {
+    age: 13,
+  },
+};
+
+console.log(users);
+
+// --------------------------- Pick<Type, keys> --------------------
+// It is used to create a type by picking some mentioned keys from a Type or interface
+interface OrderInfo {
+  readonly id: string;
+  user: string;
+  city: string;
+  state: string;
+  country?: string;
+  readonly pincode: number;
+  status: string;
+}
+
+type ShippingInfo = Pick<OrderInfo, "city" | "state" | "country" | "pincode">;
+/**
+ * The above is similar to:
+ * type ShippingInfo = {
+        city: string;
+        state: string;
+        country?: string;
+        readonly pincode: number;
+    }
+ */
+
+// ------------------------------ Omit<Type, keys> --------------------------------------
+// It creates a type or interface from an existing interface by omitting the mentioned keys. It removes specific properties (keys) from an object type.
+type UserInfo = Omit<OrderInfo, "city" | "state" | "country" | "pincode">;
+/**
+ * The above is similar to:
+ * type UserInfo = {
+        readonly id: string;
+        user: string;
+        status: string;
+    }
+ */
+
+// ------------------------------ Exclude<Type, ExcludedUnion> -----------------------------
+// It works on union types and removes types from a union that are assignable to another type.
+type MyUnion = string | number | boolean;
+type NonBoolUnion = Exclude<MyUnion, boolean>;
+
+type Status = "success" | "error" | "loading" | "unknown";
+type FinalStatus = Exclude<Status, "loading" | "unknown">;
+
+// ------------------------------- Extract<Type, Union> -----------------------------------
+// It pick matching types from a union
+type Status1 = "success" | "error" | 404;
+
+type StringStatus = Extract<Status1, string>; // type StringStatus = "success" | "error"
+
+type Mixed = string | number | (() => void) | ((name: string) => string);
+
+type FunctionsOnly = Extract<Mixed, Function>; // type FunctionsOnly = (() => void) | ((name: string) => string)
+
+// ------------------------------- NonNullable<Type> --------------------------------------
+// It Removes only null and undefined from a type.
+type Input = string | null | undefined;
+
+type CleanInput = NonNullable<Input>;
+
+type User7 = {
+  name: string;
+  age?: number;
+};
+
+type Age = NonNullable<User7["age"]>; // number
+
+// ------------------------------------ Parameters<Type> --------------------------------
+// It is used to create a type with parameters of a function. It returns the parameters as array
+
+const myfunc = (a: number, b: number): number => {
+  return a + b;
+};
+console.log(typeof myfunc);
+type MyfuncParams = Parameters<typeof myfunc>; // type MyfuncParams = [a: number, b: number]
+
+// ------------------------------------ ConstructorParameters<Type> -----------------------
+// It is same as Parameters<Type> but works on class constructor
+class SampleClass {
+  readonly id: string;
+  name: string;
+  constructor(id: string, name: string, private address: string) {
+    this.id = id;
+    this.name = name;
+  }
+}
+
+type ClassParams = ConstructorParameters<typeof SampleClass>; // type ClassParams = [id: string, name: string, address: string]
+
+// ------------------------------------ ReturnType<Type> --------------------------------------
+// It returns the return type of a function
+const myfunc2 = (f: boolean): number | undefined => {
+  if (f) {
+    return 100;
+  }
+};
+
+type RTForMyfunc = ReturnType<typeof myfunc2>; // type RTForMyfunc = number | undefined
+
+// ------------------------- InstanceType<type> ----------------------------------
+// Given a constructor type, InstanceType returns the type of the object created by new.
+class SampleClass2 {
+  readonly id: string;
+  name: string;
+  constructor(id: string, name: string, private address?: string) {
+    this.id = id;
+    this.name = name;
+  }
+}
+type SampleClassIntanceType = InstanceType<typeof SampleClass2>; // type SampleClassIntanceType = SampleClass2
+
+const sc: SampleClassIntanceType = {
+  id: "123",
+  name: "ABC",
+};
+// -----------------------------------------------------------------------------------------------------------------

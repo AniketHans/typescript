@@ -307,5 +307,91 @@ const val4 = retVal(true);
 console.log(val4?.a); // here it is checking whether val4 is undefined or not
 const val5 = retVal(true); // here we explicitly told that the retVal here will not return undefined
 console.log(val5.a);
-//------------------------------------------------------------------------------------------------------------------
+const obj = {
+    name: "John Doe",
+    email: "abc@gmail.com",
+};
+const getDataUsingKey = (key) => {
+    return obj[key]; // This is valid in JS but in ts it will throw error because key can be any string but for object of type Person the key should be either name or email
+};
+const getDataUsingKeyanfKeyOf = (key) => {
+    return obj[key]; // Here, we explicitly mentioned that the key in params will a key of Person interface so it will not throw any error
+};
+console.log(getDataUsingKey("name"));
+console.log(getDataUsingKeyanfKeyOf("email"));
+let key = "email";
+console.log(obj[key]);
+// if somehow you dont have access to the keys of interface
+console.log(obj[key]); // This tells that the key will from the typeof obj
+const obj2 = {
+    name: "John Doe",
+    email: "abc@gmail.com",
+};
+const getDataUsingKey1 = (key) => {
+    return obj2[key]; // total valid as we dont have any spefic keys in Person2 interface
+};
+const u = {
+    name: "name",
+    email: "email",
+};
+const u2 = {
+    name: "abc",
+    email: "abc@abc.com",
+};
+u2.name = "kaka"; // Error as the name and email fields are readonly and cannot be modifies after definition
+const users = {
+    Admin: {
+        age: 20,
+    },
+    Normal: {
+        age: 19,
+        dob: "10.10.2010",
+    },
+    Banned: {
+        age: 13,
+    },
+};
+console.log(users);
+// ------------------------------------ Parameters<Type> --------------------------------
+// It is used to create a type with parameters of a function. It returns the parameters as array
+const myfunc = (a, b) => {
+    return a + b;
+};
+console.log(typeof myfunc);
+// ------------------------------------ ConstructorParameters<Type> -----------------------
+// It is same as Parameters<Type> but works on class constructor
+class SampleClass {
+    address;
+    id;
+    name;
+    constructor(id, name, address) {
+        this.address = address;
+        this.id = id;
+        this.name = name;
+    }
+}
+// ------------------------------------ ReturnType<Type> --------------------------------------
+// It returns the return type of a function
+const myfunc2 = (f) => {
+    if (f) {
+        return 100;
+    }
+};
+// ------------------------- InstanceType<type> ----------------------------------
+// Given a constructor type, InstanceType returns the type of the object created by new.
+class SampleClass2 {
+    address;
+    id;
+    name;
+    constructor(id, name, address) {
+        this.address = address;
+        this.id = id;
+        this.name = name;
+    }
+}
+const sc = {
+    id: "123",
+    name: "ABC",
+};
+// -----------------------------------------------------------------------------------------------------------------
 //# sourceMappingURL=index.js.map
