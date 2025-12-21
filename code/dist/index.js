@@ -393,5 +393,61 @@ const sc = {
     id: "123",
     name: "ABC",
 };
+const getVal = (val) => {
+    return val;
+};
+const ans = getVal(10); // The type of value 10, i.e number, will replace the CustomType here. So Custom type will become number in this case
+const ans2 = getVal("haha");
+const hum1 = {
+    name: "haha",
+    email: "h@g.com",
+};
+const ans3 = getVal(hum1);
+// explicitly define the type of CustomType
+const hum2 = {
+    name: "haha2",
+    email: "h@g.com",
+};
+const ans4 = getVal(hum2); // here we have explicitly defined the type of sent value
+console.log(ans4.name);
+// Multiple generics
+const func1 = (n, o) => {
+    return { n, o };
+};
+const ans5 = func1(10, "hi");
+console.log(ans5); // { n: 10, o: 'hi' }
+console.log(ans5.n); // This is throwing error since we mentioned the return type as generalized object, although correct in node js
+const fun2 = (n, o) => {
+    return { n, o };
+};
+const ans6 = fun2("kuku", false);
+console.log(ans6); // { n: 'kuku', o: false }
+console.log(ans6.o); // Valid, since we are returning the exact object structure
+const fun3 = (n, o) => {
+    return { n, o };
+};
+const ans7 = fun3("haha", 10); // Error, since we mentioned U extends T but passing number which does not extends string
+const ans8 = fun3("haha", "10"); // Valid
+const ans9 = fun3({ name: "Haha", email: "hehe@huu.com" }, { name: "name", email: "p@h.com", age: 26 }); // This works fine since our second argument is extending the first argument
+console.log(ans9); // { n: { name: 'Haha', email: 'hehe@huu.com' }, o: { name: 'name', email: 'p@h.com', age: 26 }}
+const filterByPeople = (users, property, val // the val will be equal to the value of property U at T
+) => {
+    return users.filter((user) => user[property] === val);
+};
+const userList = [
+    {
+        name: "ab",
+        age: 20,
+    },
+    {
+        name: "bc",
+        age: 41,
+    },
+    { name: "haha", age: 90 },
+    { name: "ab", age: 26 },
+];
+const filteredPeople = filterByPeople(userList, "name", "ab");
+const filteredPeopleByAge = filterByPeople(userList, "age", 26);
+console.log(filteredPeople); //[ { name: 'ab', age: 20 }, { name: 'ab', age: 26 } ]
 // -----------------------------------------------------------------------------------------------------------------
 //# sourceMappingURL=index.js.map
